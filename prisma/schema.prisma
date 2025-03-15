@@ -13,19 +13,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id     Int     @id @default(autoincrement())
-  userId String  @unique @default(uuid())
-  age    Int
-  email  String  @unique
-  name   String?
-  posts  Post[]
+model Account {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  username   String    @unique
+  password   String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  profile    Profile?
+  modules    Modules[]
 }
 
-model Post {
-  id      Int     @id() @default(autoincrement())
-  postId  String  @default(uuid())
-  title   String
-  content String?
-  author  User    @relation(fields: [postId], references: [userId], onDelete: Cascade)
+model Profile {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @unique
+  lastname    String
+  middlename  String
+  firstname   String
+  suffix      String?
+  bio         String?
+  picture     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  account     Account   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Modules {
+  id           Int       @id @default(autoincrement())
+  accountCode  Int
+  moduleCode   String
+  moduleDetails String
+  moduleDesc   String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  account      Account   @relation(fields: [accountCode], references: [id])
 }
